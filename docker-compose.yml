@@ -1,0 +1,39 @@
+services:
+  eazybytes-accounts:
+    image: "maleeshasa/eazybytes-accounts:v1"
+    container_name: eazybytes-accounts-ms
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybytes-network
+
+  eazybytes-cards:
+    image: "maleeshasa/easybytes-cards:v1"
+    container_name: eazybytes-cards-ms
+    ports:
+      - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybytes-network
+
+  eazybytes-loans:
+    image: "maleeshasa/eazybytes-loans:v1"
+    container_name: eazybytes-loans-ms
+    ports:
+      - "9090:9090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybytes-network
+networks:
+  eazybytes-network:
+    driver: bridge
