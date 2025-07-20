@@ -10,15 +10,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(
         name = "REST API for Customers in EazyBank",
         description = "REST APIs in EazyBank to FETCH customer details"
@@ -53,10 +52,12 @@ public class CustomerController {
     }
     )
     @GetMapping(value = "/fetchCustomerDetails")
-    public ResponseEntity<CustomerDetailDTO> fetchCustomerDetails(@RequestParam(value = "mobileNumber")
-                                                                  @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
-                                                                  String mobileNumber) {
-        CustomerDetailDTO customerDetailsDto = iCustomersService.fetchCustomerDetails(mobileNumber);
+    public ResponseEntity<CustomerDetailDTO> fetchCustomerDetails(
+            @RequestHeader("eazybank-correlation-id") String correlationId,
+            @RequestParam(value = "mobileNumber")
+            @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
+        log.debug("eazyBank-correlation-id found:{}", correlationId);
+        CustomerDetailDTO customerDetailsDto = iCustomersService.fetchCustomerDetails(mobileNumber, correlationId);
         return ResponseEntity.status(HttpStatus.SC_OK).body(customerDetailsDto);
 
     }
