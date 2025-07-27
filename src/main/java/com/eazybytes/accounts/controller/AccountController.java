@@ -6,6 +6,8 @@ import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -23,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.TimeoutException;
+
 /**
  * @author Eazy Bytes
  */
@@ -31,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
         name = "CRUD REST APIs for Accounts in EazyBank",
         description = "CRUD REST APIs in EazyBank to CREATE, UPDATE, FETCH AND DELETE account details"
 )
+@Slf4j
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
@@ -167,11 +173,21 @@ public class AccountController {
             )
     }
     )
+    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
-    public ResponseEntity<String> getBuildInfo() {
+    public ResponseEntity<String> getBuildInfo() throws TimeoutException {
+        log.debug("getBuildInfo() invoked...");
+        throw new TimeoutException();
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(buildVersion);
+    }
+
+    public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
+        log.debug("getBuildInfoFallback() invoked...");
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(buildVersion);
+                .body("0.9");
     }
 
     @Operation(
@@ -192,11 +208,19 @@ public class AccountController {
             )
     }
     )
+    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallBack")
     @GetMapping("/java-version")
     public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    public ResponseEntity<String> getJavaVersionFallBack(Throwable throwable) {
+        log.debug("getJavaVersionFallBack() invoked...");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("JAVA 17");
     }
 
     @Operation(
@@ -218,9 +242,10 @@ public class AccountController {
     }
     )
     @GetMapping("/contact-info")
-    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(accountsContactInfoDto);
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() throws TimeoutException {
+        throw new TimeoutException();
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(accountsContactInfoDto);
     }
 }
