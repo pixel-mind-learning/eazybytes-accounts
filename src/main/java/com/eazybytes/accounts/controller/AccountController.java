@@ -73,7 +73,9 @@ public class AccountController {
     })
     @PostMapping(value = "/create")
     public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto) {
+        log.debug("createAccount() invoked with customerDto: started {}", customerDto);
         iAccountService.createAccount(customerDto);
+        log.debug("createAccount() invoked with customerDto: ended {}", customerDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseDto(AccountConstant.STATUS_201, AccountConstant.MESSAGE_201));
@@ -100,7 +102,9 @@ public class AccountController {
     public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam
                                                            @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
                                                            String mobileNumber) {
+        log.debug("fetchAccountDetails() invoked with mobileNumber started: {}", mobileNumber);
         CustomerDto customerDto = iAccountService.fetchAccount(mobileNumber);
+        log.debug("fetchAccountDetails() invoked with mobileNumber ended: {}", mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(customerDto);
     }
 

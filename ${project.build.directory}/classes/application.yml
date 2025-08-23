@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: "accounts"
+  profiles:
+    active: "prod"
+  config:
+    import: "configserver:${CONFIG_SERVER_URL:http://localhost:8071/}"
