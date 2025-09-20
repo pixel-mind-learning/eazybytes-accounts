@@ -247,9 +247,9 @@ public class AccountController {
     )
     @GetMapping("/contact-info")
     public ResponseEntity<AccountsContactInfoDto> getContactInfo() throws TimeoutException {
-        throw new TimeoutException();
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(accountsContactInfoDto);
+//        throw new TimeoutException();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountsContactInfoDto);
     }
 }
