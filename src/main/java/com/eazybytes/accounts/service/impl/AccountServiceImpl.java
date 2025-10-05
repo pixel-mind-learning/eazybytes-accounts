@@ -132,6 +132,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public boolean updateCommunicationStatus(Long accountNumber) {
+        log.info("updateCommunicationStatus() => started {}", accountNumber);
         boolean isUpdated;
         if (accountNumber != null) {
             Account accounts = accountsRepository.findById(accountNumber).orElseThrow(
@@ -140,8 +141,10 @@ public class AccountServiceImpl implements IAccountService {
             accounts.setCommunicationSw(true);
             accountsRepository.save(accounts);
             isUpdated = true;
+            log.info("updateCommunicationStatus() => isUpdated {}", true);
             return isUpdated;
         }
+        log.info("updateCommunicationStatus() => isUpdated {}", false);
         return false;
     }
 }
